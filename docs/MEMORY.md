@@ -83,13 +83,11 @@ If `BOOKFORGE_ADMIN_PASSWORD` is missing, loopback clients bypass login, but LAN
 
 ## macOS GPU Metrics Memory
 
-The user has confirmed this works:
+The operator should confirm this works:
 
 ```bash
 sudo -n /usr/bin/powermetrics --samplers gpu_power -i 1000 -n 1
 ```
-
-The user is `muzammilpeer`.
 
 Recommended sudoers file:
 
@@ -100,7 +98,7 @@ sudo visudo -f /etc/sudoers.d/bookforge-powermetrics
 Line:
 
 ```text
-muzammilpeer ALL=(root) NOPASSWD: /usr/bin/powermetrics --samplers gpu_power -i 1000 -n 1
+YOUR_USERNAME ALL=(root) NOPASSWD: /usr/bin/powermetrics --samplers gpu_power -i 1000 -n 1
 ```
 
 BookForge parses:
@@ -113,4 +111,3 @@ BookForge parses:
 ## Active Job Note
 
 During previous smoke tests, MimikaStudio had an already-running audiobook job. Codex did not intentionally upload/start a new job during these checks. Be careful when testing worker behavior because local Mimika may already be busy.
-

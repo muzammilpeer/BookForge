@@ -32,14 +32,14 @@ python3 -m compileall app
 Run with test credentials:
 
 ```bash
-BOOKFORGE_ADMIN_PASSWORD=testpass BOOKFORGE_SESSION_SECRET=testsecret .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8787
+BOOKFORGE_ADMIN_PASSWORD=change-me BOOKFORGE_SESSION_SECRET=change-this-too .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8787
 ```
 
 Login via curl:
 
 ```bash
 curl -sS -c /tmp/bookforge-cookies.txt \
-  -d 'username=admin&password=testpass&next=/' \
+  -d 'username=admin&password=change-me&next=/' \
   -o /dev/null -w '%{http_code}' \
   http://127.0.0.1:8787/login
 ```
@@ -98,4 +98,3 @@ For UI route changes, smoke-test the server and fetch the affected page. Avoid u
 - Keep long-running shell commands bounded with timeouts.
 - Avoid adding new dependencies unless they clearly simplify meaningful complexity.
 - Use defensive parsing for MimikaStudio responses.
-

@@ -71,7 +71,7 @@ BookForge is an independent open source companion project. It depends on MimikaS
 Clone this repository:
 
 ```bash
-git clone https://github.com/muzammilpeer/BookForge.git
+git clone https://github.com/YOUR_GITHUB_USERNAME/BookForge.git
 cd BookForge
 ```
 

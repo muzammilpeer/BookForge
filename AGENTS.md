@@ -26,7 +26,7 @@ Before adding features, read:
 
 ## Local Context
 
-- Workspace: `/Users/muzammilpeer/Git/BookForge`
+- Workspace: repository root
 - MimikaStudio backend: `http://127.0.0.1:7693`
 - BookForge app port: `8787`
 - Python app entry point: `app/main.py`
@@ -54,7 +54,7 @@ python3 -m compileall app
 For login-enabled local smoke tests:
 
 ```bash
-BOOKFORGE_ADMIN_PASSWORD=testpass BOOKFORGE_SESSION_SECRET=testsecret .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8787
+BOOKFORGE_ADMIN_PASSWORD=change-me BOOKFORGE_SESSION_SECRET=change-this-too .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8787
 ```
 
 ## Current High-Value Files
@@ -68,4 +68,3 @@ BOOKFORGE_ADMIN_PASSWORD=testpass BOOKFORGE_SESSION_SECRET=testsecret .venv/bin/
 - `app/templates/partials/dashboard_sections.html`: dashboard markup.
 - `app/static/dashboard.js`: SSE client and live table patching.
 - `app/static/upload.js`: voice demo UI behavior.
-

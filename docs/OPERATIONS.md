@@ -53,17 +53,7 @@ Add:
 YOUR_USERNAME ALL=(root) NOPASSWD: /usr/bin/powermetrics --samplers gpu_power -i 1000 -n 1
 ```
 
-For this machine, the user is:
-
-```text
-muzammilpeer
-```
-
-So the line is:
-
-```text
-muzammilpeer ALL=(root) NOPASSWD: /usr/bin/powermetrics --samplers gpu_power -i 1000 -n 1
-```
+Replace `YOUR_USERNAME` with the output from `whoami`.
 
 ## Important Local Files
 
@@ -116,4 +106,3 @@ If dashboard does not update:
 - Check browser console for SSE errors.
 - Open `/api/dashboard-state` after login.
 - Open `/events/dashboard` after login.
-

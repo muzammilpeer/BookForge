@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 authors = [
-  { name = "Muzammil Peer" },
+  { name = "BookForge contributors" },
 ]
 keywords = ["audiobook", "tts", "mimikastudio", "fastapi", "local-first"]
 classifiers = [
@@ -29,9 +29,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/muzammilpeer/BookForge"
-Repository = "https://github.com/muzammilpeer/BookForge"
-Issues = "https://github.com/muzammilpeer/BookForge/issues"
+Homepage = "https://github.com/YOUR_GITHUB_USERNAME/BookForge"
+Repository = "https://github.com/YOUR_GITHUB_USERNAME/BookForge"
+Issues = "https://github.com/YOUR_GITHUB_USERNAME/BookForge/issues"
 MimikaStudio = "https://github.com/BoltzmannEntropy/MimikaStudio"
 
 [tool.ruff]
