@@ -24,6 +24,29 @@ http://127.0.0.1:7693
 4. Open BookForge in your browser.
 5. Upload books/documents, monitor the queue, download final audio, or copy output to Audiobookshelf.
 
+## Start MimikaStudio Backend
+
+BookForge requires the MimikaStudio backend to be running first. If the MimikaStudio app does not start it automatically, start the bundled backend manually:
+
+```bash
+cd /Applications/MimikaStudio.app/Contents/Resources/backend
+./venv/bin/python main.py
+```
+
+You should see Uvicorn startup logs similar to:
+
+```text
+INFO:     Started server process [...]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+Then confirm the backend is reachable at:
+
+```text
+http://127.0.0.1:7693
+```
+
 ## Features
 
 - Upload PDF, EPUB, TXT, Markdown, and DOCX files.
@@ -62,7 +85,7 @@ The install script creates `.venv`, installs dependencies, copies `config.yaml.e
 
 ## Run
 
-Start MimikaStudio first, then run:
+Start the MimikaStudio backend first, then run:
 
 ```bash
 export BOOKFORGE_ADMIN_PASSWORD="change-me"
