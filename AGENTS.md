@@ -22,6 +22,7 @@ Before adding features, read:
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/DIRECTORY_STRUCTURE.md](docs/DIRECTORY_STRUCTURE.md)
 - [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
+- [docs/MACOS_LAUNCHD.md](docs/MACOS_LAUNCHD.md)
 - [docs/OPERATIONS.md](docs/OPERATIONS.md)
 
 ## Local Context

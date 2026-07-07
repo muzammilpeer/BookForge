@@ -21,6 +21,8 @@ http://localhost:8787
 
 `scripts/run.sh` binds to `0.0.0.0:8787` for LAN use.
 
+For macOS auto-start with `launchd`, see [MACOS_LAUNCHD.md](MACOS_LAUNCHD.md).
+
 ## Login
 
 Use:

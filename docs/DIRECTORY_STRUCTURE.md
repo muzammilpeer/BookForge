@@ -38,6 +38,7 @@ BookForge/
     ARCHITECTURE.md
     DEVELOPMENT.md
     DIRECTORY_STRUCTURE.md
+    MACOS_LAUNCHD.md
     MEMORY.md
     OPERATIONS.md
   scripts/
@@ -78,4 +79,3 @@ Dashboard SSE client. Update this when changing dashboard JSON shape.
 `app/system_metrics.py`
 
 Host monitoring logic. Keep commands bounded with timeouts.
-

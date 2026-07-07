@@ -102,6 +102,8 @@ http://localhost:8787
 
 If `BOOKFORGE_ADMIN_PASSWORD` is missing, BookForge logs a warning and only loopback clients bypass login. Set the password before exposing BookForge on your LAN.
 
+To run BookForge automatically on macOS login/restart with start, stop, restart, and status commands, see [docs/MACOS_LAUNCHD.md](docs/MACOS_LAUNCHD.md).
+
 ## Configuration
 
 Edit `config.yaml` directly or use the Settings page.
@@ -179,4 +181,5 @@ For future Codex sessions and feature work, start with:
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/DIRECTORY_STRUCTURE.md](docs/DIRECTORY_STRUCTURE.md)
 - [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)
+- [docs/MACOS_LAUNCHD.md](docs/MACOS_LAUNCHD.md)
 - [docs/OPERATIONS.md](docs/OPERATIONS.md)
