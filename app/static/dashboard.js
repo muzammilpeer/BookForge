@@ -36,7 +36,7 @@ function jobRow(job, selected) {
       <td class="select-col">
         <input form="bulk-actions" type="checkbox" name="job_ids" value="${job.id}" ${selected ? "checked" : ""} aria-label="Select ${escapeHtml(job.title)}">
       </td>
-      <td><span class="badge ${escapeHtml(job.status)}">${escapeHtml(job.status)}</span></td>
+      <td><span class="badge ${escapeHtml(job.display_status || job.status)}">${escapeHtml(job.display_status || job.status)}</span></td>
       <td class="progress-col">
         <div class="progress"><span style="width: ${Number(job.progress || 0)}%"></span></div>
         <small>${formatPercent(job.progress)}${chars}</small>

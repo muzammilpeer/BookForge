@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -81,44 +82,60 @@ async def poll_job(job: Job) -> None:
     }
     changes = {key: value for key, value in changes.items() if value is not None}
 
+    progress_value = _as_float(status.get("progress"))
+
     if normalized_status in TERMINAL_COMPLETED:
         output_path = await resolve_output_path(client, job, status)
-        copied_path = None
-        if output_path:
-            try:
-                copied_path = copy_file_to_dir(output_path, settings.completed_dir, job.title)
-            except Exception as exc:
-                db.update_job(job.id, status="failed", completed_at=db.now_iso(), error=f"Copy failed: {exc}")
-                return
-        copied_to_abs = False
-        if copied_path and job.auto_copy_to_audiobookshelf:
-            try:
-                copy_file_to_dir(str(copied_path), settings.audiobookshelf_dir)
-                copied_to_abs = True
-            except Exception as exc:
-                log.warning("Audiobookshelf copy failed for job %s: %s", job.id, exc)
-        db.update_job(
-            job.id,
-            **changes,
-            status="completed",
-            progress=100.0,
-            output_path=str(copied_path) if copied_path else None,
-            copied_to_audiobookshelf=int(copied_to_abs),
-            completed_at=db.now_iso(),
-        )
+        await complete_job(job, settings, output_path, changes)
     elif normalized_status in TERMINAL_FAILED:
         move_file_to_dir(job.input_path, settings.failed_dir)
         db.update_job(job.id, **changes, status="failed", completed_at=db.now_iso())
     elif normalized_status in TERMINAL_CANCELED:
         db.update_job(job.id, **changes, status="canceled", completed_at=db.now_iso())
+    elif progress_value is not None and progress_value >= 100:
+        output_path = await resolve_output_path(client, job, status)
+        if output_path:
+            await complete_job(job, settings, output_path, changes)
+        else:
+            changes["eta_formatted"] = "finalizing audio..."
+            db.update_job(job.id, **changes, status="running")
     else:
         db.update_job(job.id, **changes, status="running")
 
 
+async def complete_job(job: Job, settings, output_path: str | None, changes: dict[str, Any]) -> None:
+    copied_path = None
+    if output_path:
+        try:
+            copied_path = copy_file_to_dir(output_path, settings.completed_dir, job.title)
+        except Exception as exc:
+            db.update_job(job.id, status="failed", completed_at=db.now_iso(), error=f"Copy failed: {exc}")
+            return
+    copied_to_abs = False
+    if copied_path and job.auto_copy_to_audiobookshelf:
+        try:
+            copy_file_to_dir(str(copied_path), settings.audiobookshelf_dir)
+            copied_to_abs = True
+        except Exception as exc:
+            log.warning("Audiobookshelf copy failed for job %s: %s", job.id, exc)
+    db.update_job(
+        job.id,
+        **changes,
+        status="completed",
+        progress=100.0,
+        output_path=str(copied_path) if copied_path else None,
+        copied_to_audiobookshelf=int(copied_to_abs),
+        completed_at=db.now_iso(),
+    )
+
+
 async def resolve_output_path(client: MimikaClient, job: Job, status: dict[str, Any]) -> str | None:
     direct = status.get("output_path")
-    if direct and Path(str(direct)).exists():
+    if direct and Path(str(direct)).exists() and not is_file_open(str(direct)):
         return str(direct)
+    inferred = infer_mimika_output_path(job)
+    if inferred and not is_file_open(str(inferred)):
+        return str(inferred)
     try:
         listing = await client.audiobook_list()
     except Exception as exc:
@@ -129,9 +146,43 @@ async def resolve_output_path(client: MimikaClient, job: Job, status: dict[str, 
         candidate_job_id = str(item.get("job_id") or item.get("id") or item.get("mimika_job_id") or "")
         title = str(item.get("title") or item.get("name") or item.get("filename") or "")
         path = item.get("path") or item.get("output_path") or item.get("file_path")
-        if path and Path(str(path)).exists() and (candidate_job_id == job.mimika_job_id or job.title in title):
+        matches_job_id = candidate_job_id == job.mimika_job_id or candidate_job_id.endswith(
+            f"-{job.mimika_job_id}"
+        )
+        if (
+            path
+            and Path(str(path)).exists()
+            and not is_file_open(str(path))
+            and (matches_job_id or job.title in title)
+        ):
             return str(path)
     return None
+
+
+def infer_mimika_output_path(job: Job) -> Path | None:
+    if not job.mimika_job_id:
+        return None
+    candidate = (
+        Path.home()
+        / "MimikaStudio"
+        / "outputs"
+        / f"audiobook-{job.voice}-{job.mimika_job_id}.{job.output_format}"
+    )
+    return candidate if candidate.exists() else None
+
+
+def is_file_open(path: str) -> bool:
+    try:
+        result = subprocess.run(
+            ["lsof", "--", path],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=1,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return result.returncode == 0
 
 
 def _flatten_listing(value: Any) -> list[dict[str, Any]]:

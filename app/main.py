@@ -520,11 +520,15 @@ def absolute_mimika_url(value: str, base_url: str) -> str:
 
 def serialize_job(job) -> dict[str, Any]:
     output_filename = Path(job.output_path).name if job.output_path else None
+    display_status = job.status
+    if job.status == "running" and (job.progress or 0) >= 100 and not job.output_path:
+        display_status = "finalizing"
     return {
         "id": job.id,
         "mimika_job_id": job.mimika_job_id,
         "title": job.title,
         "status": job.status,
+        "display_status": display_status,
         "progress": job.progress or 0,
         "chars_per_sec": job.chars_per_sec,
         "eta_formatted": job.eta_formatted,

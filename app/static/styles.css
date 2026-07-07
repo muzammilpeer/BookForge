@@ -99,6 +99,7 @@ p { color: var(--muted); }
   color: #344454;
 }
 .badge.running { background: #dbeafe; color: var(--accent-2); }
+.badge.finalizing { background: #ede9fe; color: #6d28d9; }
 .badge.completed { background: #dcfce7; color: var(--ok); }
 .badge.failed { background: #fee2e2; color: var(--danger); }
 .badge.canceled { background: #fef3c7; color: var(--warn); }
