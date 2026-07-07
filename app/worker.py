@@ -69,6 +69,11 @@ async def poll_job(job: Job) -> None:
     try:
         status = await client.status(job.mimika_job_id)
     except Exception as exc:
+        if (job.progress or 0) >= 100:
+            output_path = infer_mimika_output_path(job)
+            if output_path and not is_file_open(str(output_path)):
+                await complete_job(job, settings, str(output_path), {"error": None})
+                return
         db.update_job(job.id, error=str(exc))
         return
 
@@ -104,29 +109,69 @@ async def poll_job(job: Job) -> None:
 
 
 async def complete_job(job: Job, settings, output_path: str | None, changes: dict[str, Any]) -> None:
+    db.update_job(job.id, status="completing")
     copied_path = None
     if output_path:
         try:
-            copied_path = copy_file_to_dir(output_path, settings.completed_dir, job.title)
+            copied_path = find_existing_copy(job, settings.completed_dir, output_path)
+            if copied_path is None:
+                copied_path = copy_file_to_dir(output_path, settings.completed_dir, job.title)
         except Exception as exc:
             db.update_job(job.id, status="failed", completed_at=db.now_iso(), error=f"Copy failed: {exc}")
             return
     copied_to_abs = False
     if copied_path and job.auto_copy_to_audiobookshelf:
         try:
-            copy_file_to_dir(str(copied_path), settings.audiobookshelf_dir)
-            copied_to_abs = True
+            copied_to_abs = find_existing_copy(job, settings.audiobookshelf_dir, str(copied_path)) is not None
+            if not copied_to_abs:
+                copy_file_to_dir(str(copied_path), settings.audiobookshelf_dir)
+                copied_to_abs = True
         except Exception as exc:
             log.warning("Audiobookshelf copy failed for job %s: %s", job.id, exc)
+    completion_changes = {
+        key: value
+        for key, value in changes.items()
+        if key
+        not in {
+            "status",
+            "progress",
+            "output_path",
+            "copied_to_audiobookshelf",
+            "completed_at",
+        }
+    }
     db.update_job(
         job.id,
-        **changes,
+        **completion_changes,
         status="completed",
         progress=100.0,
+        eta_seconds=0,
+        eta_formatted=None,
         output_path=str(copied_path) if copied_path else None,
         copied_to_audiobookshelf=int(copied_to_abs),
         completed_at=db.now_iso(),
     )
+
+
+def find_existing_copy(job: Job, target_dir: str, source_path: str) -> Path | None:
+    source = Path(source_path)
+    if not source.exists():
+        return None
+    source_size = source.stat().st_size
+    candidates = sorted(
+        Path(target_dir).glob(f"{job.title}*.{job.output_format}"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    for candidate in candidates:
+        if candidate.name.startswith("._") or not candidate.is_file():
+            continue
+        try:
+            if candidate.stat().st_size == source_size:
+                return candidate
+        except OSError:
+            continue
+    return None
 
 
 async def resolve_output_path(client: MimikaClient, job: Job, status: dict[str, Any]) -> str | None:

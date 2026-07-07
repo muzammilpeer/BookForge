@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from sqlite3 import Row
 
 
-STATUSES = ("queued", "running", "completed", "failed", "canceled")
+STATUSES = ("queued", "running", "completing", "completed", "failed", "canceled")
 ALLOWED_EXTENSIONS = {".pdf", ".epub", ".txt", ".md", ".docx"}
 OUTPUT_FORMATS = ("wav", "mp3", "m4b")
 SUBTITLE_FORMATS = ("none", "srt", "vtt")

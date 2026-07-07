@@ -134,7 +134,7 @@ def status_counts() -> dict[str, int]:
     with connect() as conn:
         rows = conn.execute("select status, count(*) as total from jobs group by status").fetchall()
         counts = {row["status"]: int(row["total"]) for row in rows}
-    for status in ("queued", "running", "completed", "failed", "canceled"):
+    for status in ("queued", "running", "completing", "completed", "failed", "canceled"):
         counts.setdefault(status, 0)
     return counts
 
