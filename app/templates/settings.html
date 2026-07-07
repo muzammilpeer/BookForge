@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Settings - BookForge{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Settings</h1>
+    <p>Persisted in config.yaml.</p>
+  </div>
+</section>
+
+<form class="form panel" action="/settings" method="post">
+  <label>
+    MimikaStudio backend URL
+    <input type="url" name="mimika_base_url" value="{{ settings.mimika_base_url }}" required>
+  </label>
+  <label>
+    Max parallel jobs
+    <input type="number" name="max_parallel_jobs" min="1" max="4" value="{{ settings.max_parallel_jobs }}">
+  </label>
+  <label>
+    Dashboard live update interval (seconds)
+    <input type="number" name="sse_interval_seconds" min="1" max="60" step="0.5" value="{{ settings.sse_interval_seconds }}">
+  </label>
+  <label>
+    Default voice
+    <input type="text" name="default_voice" value="{{ settings.default_voice }}">
+  </label>
+  <label>
+    Default speed
+    <input type="number" name="default_speed" step="0.05" min="0.5" max="2.0" value="{{ settings.default_speed }}">
+  </label>
+  <label>
+    Default output format
+    <select name="default_output_format">
+      {% for fmt in output_formats %}
+      <option value="{{ fmt }}" {{ "selected" if fmt == settings.default_output_format else "" }}>{{ fmt }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    Default subtitle format
+    <select name="default_subtitle_format">
+      {% for fmt in subtitle_formats %}
+      <option value="{{ fmt }}" {{ "selected" if fmt == settings.default_subtitle_format else "" }}>{{ fmt }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="inline">
+    <input type="checkbox" name="auto_copy_to_audiobookshelf" value="true" {{ "checked" if settings.auto_copy_to_audiobookshelf else "" }}>
+    Auto-copy to Audiobookshelf
+  </label>
+  <label>
+    Incoming upload path
+    <input type="text" name="incoming_dir" value="{{ settings.incoming_dir }}" required>
+  </label>
+  <label>
+    Worker scratch path
+    <input type="text" name="work_dir" value="{{ settings.work_dir }}" required>
+  </label>
+  <label>
+    Completed output path
+    <input type="text" name="completed_dir" value="{{ settings.completed_dir }}" required>
+  </label>
+  <label>
+    Failed/archive path
+    <input type="text" name="failed_dir" value="{{ settings.failed_dir }}" required>
+  </label>
+  <label>
+    Audiobookshelf output path
+    <input type="text" name="audiobookshelf_dir" value="{{ settings.audiobookshelf_dir }}" required>
+  </label>
+  <label>
+    Max upload size (GB)
+    <input type="number" name="max_upload_size_gb" value="{{ '%.2f'|format(settings.max_upload_size_bytes / 1024 / 1024 / 1024) }}" min="0.01" step="0.01">
+  </label>
+  <dl class="paths">
+    <dt>Mimika</dt><dd>{{ settings.mimika_base_url }}</dd>
+    <dt>Incoming</dt><dd>{{ settings.incoming_dir }}</dd>
+    <dt>Completed</dt><dd>{{ settings.completed_dir }}</dd>
+    <dt>Audiobookshelf</dt><dd>{{ settings.audiobookshelf_dir }}</dd>
+  </dl>
+  <button class="button primary" type="submit">Save settings</button>
+</form>
+{% endblock %}

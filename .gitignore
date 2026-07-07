@@ -156,6 +156,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+bookforge.sqlite3
+config.yaml
+bookforge.egg-info/
 
 # Spyder project settings
 .spyderproject

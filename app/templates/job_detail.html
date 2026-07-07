@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }} - BookForge{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>{{ job.title }}</h1>
+    <p>{{ job.original_filename }}</p>
+  </div>
+  <span class="badge {{ job.status }}">{{ job.status }}</span>
+</section>
+
+<section class="panel detail-grid">
+  <div><span>Local job ID</span><strong>{{ job.id }}</strong></div>
+  <div><span>Mimika job ID</span><strong>{{ job.mimika_job_id or "Not started" }}</strong></div>
+  <div><span>Voice</span><strong>{{ job.voice }}</strong></div>
+  <div><span>Speed</span><strong>{{ job.speed }}</strong></div>
+  <div><span>Output</span><strong>{{ job.output_format }}</strong></div>
+  <div><span>Subtitles</span><strong>{{ job.subtitle_format }}</strong></div>
+  <div><span>Auto-copy</span><strong>{{ "Yes" if job.auto_copy_to_audiobookshelf else "No" }}</strong></div>
+  <div><span>Progress</span><strong>{{ job.progress or 0 }}%</strong></div>
+  <div><span>Chars/sec</span><strong>{{ job.chars_per_sec or "Unknown" }}</strong></div>
+  <div><span>ETA</span><strong>{{ job.eta_formatted or job.eta_seconds or "Unknown" }}</strong></div>
+  <div><span>Created</span><strong>{{ job.created_at }}</strong></div>
+  <div><span>Started</span><strong>{{ job.started_at or "Not started" }}</strong></div>
+  <div><span>Completed</span><strong>{{ job.completed_at or "Not completed" }}</strong></div>
+</section>
+
+{% if job.error %}
+<section class="panel error"><strong>Error:</strong> {{ job.error }}</section>
+{% endif %}
+
+<section class="panel actions">
+  <form action="/jobs/{{ job.id }}/cancel" method="post"><button class="button" type="submit">Cancel</button></form>
+  <form action="/jobs/{{ job.id }}/retry" method="post"><button class="button" type="submit">Retry</button></form>
+  {% if job.output_path %}
+  <a class="button primary" href="/jobs/{{ job.id }}/download">Download output</a>
+  <form action="/jobs/{{ job.id }}/copy-to-audiobookshelf" method="post"><button class="button" type="submit">Copy to Audiobookshelf</button></form>
+  {% endif %}
+  <form class="delete-form" action="/jobs/{{ job.id }}/delete" method="post">
+    <label><input type="checkbox" name="delete_input" value="true"> Delete input</label>
+    <label><input type="checkbox" name="delete_output" value="true"> Delete output</label>
+    <label><input type="checkbox" name="delete_mimika" value="true"> Delete Mimika job/output</label>
+    <button class="button danger" type="submit">Delete local record</button>
+  </form>
+</section>
+{% endblock %}

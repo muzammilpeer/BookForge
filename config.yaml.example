@@ -1,0 +1,14 @@
+mimika_base_url: "http://127.0.0.1:7693"
+max_parallel_jobs: 1
+default_voice: "bf_emma"
+default_speed: 1.0
+default_output_format: "m4b"
+default_subtitle_format: "none"
+auto_copy_to_audiobookshelf: true
+incoming_dir: "/Volumes/media/apps/bookforge/incoming"
+work_dir: "/Volumes/media/apps/bookforge/work"
+completed_dir: "/Volumes/media/apps/bookforge/completed"
+failed_dir: "/Volumes/media/apps/bookforge/failed"
+audiobookshelf_dir: "/Volumes/media/apps/audiobookshelf/audiobooks"
+max_upload_size_bytes: 2147483648
+sse_interval_seconds: 2.0

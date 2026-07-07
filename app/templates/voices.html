@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Voices - BookForge{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Voices</h1>
+    <p>Fetched from MimikaStudio /api/kokoro/voices.</p>
+  </div>
+</section>
+
+<section class="panel">
+  {% if voices %}
+  <div class="voice-list">
+    {% for voice in voices %}
+    <form class="voice-row" action="/voices/default" method="post">
+      <div><strong>{{ voice.label }}</strong><small>{{ voice.id }}</small></div>
+      <input type="hidden" name="default_voice" value="{{ voice.id }}">
+      <button class="button" type="submit">{{ "Default" if voice.id == settings.default_voice else "Set default" }}</button>
+    </form>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty">No voices returned. Check that MimikaStudio is running.</p>
+  {% endif %}
+</section>
+{% endblock %}

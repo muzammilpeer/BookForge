@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Mimika Browser - BookForge{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Mimika Browser</h1>
+    <p>Raw backend lists with safe delete controls for generated audio.</p>
+  </div>
+</section>
+
+{% for name, result in payload.items() %}
+<section class="panel">
+  <div class="panel-title"><h2>{{ name|replace("_", " ")|title }}</h2></div>
+  {% if result.ok %}
+    {% if name in ["kokoro_audio", "tts_audio"] %}
+      {% set items = audio_items[name] %}
+      {% if items %}
+      <div class="file-list">
+        {% for filename in items %}
+          <form class="file-row" action="/mimika/{{ 'kokoro' if name == 'kokoro_audio' else 'tts' }}/delete/{{ filename }}" method="post">
+            <span>{{ filename }}</span>
+            <button class="button danger" type="submit">Delete</button>
+          </form>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endif %}
+    <pre>{{ result.data | tojson(indent=2) }}</pre>
+  {% else %}
+    <p class="error">{{ result.error }}</p>
+  {% endif %}
+</section>
+{% endfor %}
+{% endblock %}

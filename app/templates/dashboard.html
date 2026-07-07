@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - BookForge{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Manage the audiobook queue, track every job, and download finished audio.</p>
+  </div>
+  <a class="button primary" href="/upload">Upload files</a>
+</section>
+
+<div id="dashboard-sections">
+  {% include "partials/dashboard_sections.html" %}
+</div>
+<script src="/static/dashboard.js"></script>
+{% endblock %}

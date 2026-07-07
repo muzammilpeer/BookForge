@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Upload - BookForge{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>Upload</h1>
+    <p>Queue PDF, EPUB, TXT, Markdown, or DOCX files for MimikaStudio conversion.</p>
+  </div>
+</section>
+
+<form class="form panel" action="/upload" method="post" enctype="multipart/form-data">
+  <label>
+    Files
+    <input type="file" name="files" multiple required accept=".pdf,.epub,.txt,.md,.docx">
+  </label>
+  <label>
+    Voice
+    <div class="voice-picker">
+      <select name="voice" id="voice-select">
+      {% if voices %}
+        {% for voice in voices %}
+        <option value="{{ voice.id }}" {{ "selected" if voice.id == settings.default_voice else "" }}>{{ voice.label }} ({{ voice.id }})</option>
+        {% endfor %}
+      {% else %}
+        <option value="{{ settings.default_voice }}">{{ settings.default_voice }}</option>
+      {% endif %}
+      </select>
+      <button class="button" type="button" id="voice-demo-button">Play demo</button>
+    </div>
+  </label>
+  <audio id="voice-demo-player" class="voice-demo-player" controls preload="none"></audio>
+  <p class="muted" id="voice-demo-status"></p>
+  <label>
+    Speed
+    <input type="number" name="speed" value="{{ settings.default_speed }}" step="0.05" min="0.5" max="2.0">
+  </label>
+  <label>
+    Output format
+    <select name="output_format">
+      {% for fmt in output_formats %}
+      <option value="{{ fmt }}" {{ "selected" if fmt == settings.default_output_format else "" }}>{{ fmt }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    Subtitle format
+    <select name="subtitle_format">
+      {% for fmt in subtitle_formats %}
+      <option value="{{ fmt }}" {{ "selected" if fmt == settings.default_subtitle_format else "" }}>{{ fmt }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    Title override
+    <input type="text" name="title" placeholder="Optional; filename is used when empty">
+  </label>
+  <label class="inline">
+    <input type="checkbox" name="auto_copy_to_audiobookshelf" value="true" {{ "checked" if settings.auto_copy_to_audiobookshelf else "" }}>
+    Auto-copy completed output to Audiobookshelf
+  </label>
+  <button class="button primary" type="submit">Queue upload</button>
+</form>
+<script>
+  window.bookforgeVoices = {{ voices_json | safe }};
+</script>
+<script src="/static/upload.js"></script>
+{% endblock %}

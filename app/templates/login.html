@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - BookForge</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body class="login-body">
+    <main class="login-card">
+      <div>
+        <h1>BookForge</h1>
+        <p>Sign in to manage audiobook jobs.</p>
+      </div>
+      {% if not password_required %}
+      <p class="notice">Set BOOKFORGE_ADMIN_PASSWORD to require login for this local instance.</p>
+      {% endif %}
+      {% if error %}<p class="error">{{ error }}</p>{% endif %}
+      <form class="form" action="/login" method="post">
+        <input type="hidden" name="next" value="{{ next }}">
+        <label>
+          Username
+          <input type="text" name="username" value="{{ username }}" autocomplete="username" required>
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+        <button class="button primary" type="submit">Login</button>
+      </form>
+    </main>
+  </body>
+</html>
